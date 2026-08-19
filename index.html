@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStore & Hub de Conhecimento — Computação</title>
+
+    <!-- PDF.js para extração local -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #060911;
+            --bg-card: rgba(13, 19, 33, 0.88);
+            --bg-card-hover: rgba(20, 29, 51, 0.95);
+            --border: rgba(255, 255, 255, 0.12);
+            --border-hover: rgba(56, 189, 248, 0.5);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-emerald: #10b981;
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --accent-linkedin: #0a66c2;
+            --accent-github: #2ea44f;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --transition: all 0.25s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            /* Imagem de Fundo aplicada com camada escura (overlay) para contraste */
+            background: linear-gradient(rgba(6, 9, 17, 0.88), rgba(6, 9, 17, 0.92)), 
+                        url('https://www.edneiprocopio.com.br/wp-content/uploads/2022/04/blog-2-Bibliotecario-Digital-desafios-e-oportunidades-1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* BANNER TOPO / PROMO BAR */
+        .promo-bar {
+            background: linear-gradient(90deg, #10b981 0%, #0284c7 100%);
+            color: #022c22;
+            text-align: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        /* HEADER E-COMMERCE GLASSMORPHIC */
+        header.shop-header {
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 1.5rem;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span { color: var(--accent-cyan); }
+
+        .search-store {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-store input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            background: rgba(13, 19, 33, 0.85);
+            color: white;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .search-store::before {
+            content: '🔍';
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+        }
+
+        .cart-widget {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cart-widget:hover { background: rgba(16, 185, 129, 0.35); }
+
+        /* NAVEGAÇÃO DE CATEGORIAS DA LOJA */
+        .categories-bar {
+            background: rgba(13, 19, 33, 0.75);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            overflow-x: auto;
+            position: sticky;
+            top: 65px;
+            z-index: 99;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .categories-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .cat-chip {
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .cat-chip:hover, .cat-chip.active {
+            background: var(--accent-cyan);
+            color: #060911;
+            border-color: var(--accent-cyan);
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .main-layout {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .categories-bar { top: 60px; }
+        }
+
+        /* SIDEBAR FILTROS & CHECKOUT PIX */
+        .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .side-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+        }
+
+        .side-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pix-checkout {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(13, 19, 33, 0.9) 100%);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .pix-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #34d399;
+            margin: 0.5rem 0;
+        }
+
+        .btn-pix {
+            width: 100%;
+            background: var(--accent-emerald);
+            color: #022c22;
+            font-weight: 800;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-pix:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+
+        /* VITRINE DE PRODUTOS / CARDS */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .badge-count {
+            font-size: 0.8rem;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--accent-cyan);
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.7);
+        }
+
+        .tag-free {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .product-card h4 { font-size: 1rem; margin-top: 0.5rem; margin-bottom: 0.4rem; padding-right: 2.5rem; }
+        .product-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1; }
+
+        .btn-buy {
+            display: block;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .btn-buy:hover { background: var(--accent-cyan); color: #060911; }
+        .btn-github { background: #238636; border: none; }
+        .btn-github:hover { background: #2ea44f; color: white; }
+        .btn-linkedin { background: #0a66c2; border: none; }
+        .btn-linkedin:hover { background: #0077b5; color: white; }
+        .btn-leetcode { background: #d97706; border: none; }
+        .btn-leetcode:hover { background: #f59e0b; color: white; }
+
+        /* PAINEL INTERATIVO LEITOR / FERRAMENTA */
+        .feature-box {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .audio-controls { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
+
+        .btn-audio {
+            background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+            color: white; font-weight: 700; border: none;
+            padding: 0.6rem 1rem; border-radius: var(--radius-md);
+            cursor: pointer; transition: var(--transition); font-size: 0.85rem;
+        }
+
+        .btn-audio:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        select, input[type="file"] {
+            padding: 0.6rem 0.8rem; border-radius: var(--radius-md);
+            border: 1px solid var(--border); background: rgba(6, 9, 17, 0.85);
+            color: white; outline: none; font-size: 0.85rem;
+        }
+
+        .chat-output {
+            background: rgba(6, 9, 17, 0.9); border-radius: var(--radius-md);
+            padding: 1rem; min-height: 100px; max-height: 200px;
+            overflow-y: auto; margin-top: 1rem; font-size: 0.85rem;
+            border: 1px solid var(--border); color: #e2e8f0; white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA PROMOCIONAL TOPO -->
+    <div class="promo-bar">
+        🔥 Vitrine Universitária Aberta — Acesse materiais de Banco de Dados, Programação e Carreira!
+    </div>
+
+    <!-- NAVBAR NÍVEL E-COMMERCE -->
+    <header class="shop-header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                💻 Dev<span>Store</span>
+            </a>
+
+            <div class="search-store">
+                <input type="text" id="storeSearch" placeholder="Buscar SQL, Banco de Dados, C, Python, LeetCode..." onkeyup="filterStore()">
+            </div>
+
+            <div class="cart-widget" onclick="copyPix()">
+                <span>🛒</span>
+                <span style="font-size: 0.85rem; font-weight: 700; color: #34d399;">Apoiar R$ 9,99</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGAÇÃO DE CATEGORIAS DA "LOJA" -->
+    <nav class="categories-bar">
+        <div class="categories-container">
+            <a href="#banco-dados" class="cat-chip active">🗄️ Banco de Dados</a>
+            <a href="#estante" class="cat-chip">📚 Linguagens & Algoritmos</a>
+            <a href="#leitor" class="cat-chip">🎙️ Leitor de Áudio (IA)</a>
+            <a href="#carreira" class="cat-chip">🚀 Carreiras & Prática</a>
+            <a href="#utilitarios" class="cat-chip">🛠️ Conversores</a>
+        </div>
+    </nav>
+
+    <!-- CONTAINER DA LOJA -->
+    <div class="main-layout">
+
+        <!-- SIDEBAR DE CARRINHO / FILTROS -->
+        <aside class="sidebar">
+
+            <div class="side-card pix-checkout">
+                <h3>💚 Apoie o Servidor</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Mantenha esta plataforma 100% gratuita para estudantes com um Pix simbólico.</p>
+                <div class="pix-price">R$ 9,99</div>
+                <button class="btn-pix" onclick="copyPix()">Copiar Chave Pix</button>
+                <div id="pixKey" style="display:none;">61994112380</div>
+            </div>
+
+            <div class="side-card">
+                <h3>⚡ Destaques de Hoje</h3>
+                <ul style="list-style: none; font-size: 0.85rem; color: var(--text-secondary);">
+                    <li style="margin-bottom: 0.6rem;">• 🗄️ PostgreSQL Tutorial Oficial</li>
+                    <li style="margin-bottom: 0.6rem;">• 📖 Kernighan & Ritchie (ANSI C)</li>
+                    <li style="margin-bottom: 0.6rem;">• ⚡ LeetCode para Treino de Lógica</li>
+                    <li style="margin-bottom: 0.6rem;">• 💼 Perfil Campeão no LinkedIn</li>
+                </ul>
+            </div>
+
+        </aside>
+
+        <!-- ÁREA DE PRODUTOS E SEÇÕES -->
+        <main>
+
+            <!-- SEÇÃO 1: BANCO DE DADOS -->
+            <section id="banco-dados">
+                <div class="section-title">
+                    <span>🗄️ Banco de Dados & SQL</span>
+                    <span class="badge-count">4 Materiais</span>
+                </div>
+
+                <div class="product-grid">
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-cyan);">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>PostgreSQL Tutorial</h4>
+                            <p>Guia prático e completo do banco relacional mais avançado do mundo open-source.</p>
+                        </div>
+                        <a href="https://www.postgresqltutorial.com/" target="_blank" class="btn-buy">Acessar Tutorial</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-blue);">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>SQLZoo Interactive</h4>
+                            <p>Aprenda consultas SQL (SELECT, JOIN, GROUP BY) escrevendo código direto no navegador.</p>
+                        </div>
+                        <a href="https://sqlzoo.net/" target="_blank" class="btn-buy">Praticar SQL</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-orange);">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>MySQL Reference Manual</h4>
+                            <p>Documentação e guia oficial do MySQL para criação de tabelas, índices e triggers.</p>
+                        </div>
+                        <a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" class="btn-buy">Ver Manual</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-purple);">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>Database Design (Basic)</h4>
+                            <p>Aprenda Modelagem Entidade-Relacionamento (DER) e Normalização (1FN, 2FN, 3FN).</p>
+                        </div>
+                        <a href="https://www.geeksforgeeks.org/dbms/" target="_blank" class="btn-buy">Acessar Guia</a>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2: LINGUAGENS & ALGORITMOS -->
+            <section id="estante">
+                <div class="section-title">
+                    <span>📚 Programação, C & Python</span>
+                    <span class="badge-count">5 Produtos</span>
+                </div>
+
+                <div class="product-grid">
+
+                    <div class="product-card">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>Introdução a Python</h4>
+                            <p>Lógica de programação e algoritmos do básico ao avançado em Python.</p>
+                        </div>
+                        <a href="https://nilo.pro.br/nilo/livros/introducao-python.html" target="_blank" class="btn-buy">Acessar Livro</a>
+                    </div>
+
+                    <div class="product-card">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>The C Programming Language</h4>
+                            <p>O livro clássico da linguagem ANSI C por K&R (Kernighan e Ritchie).</p>
+                        </div>
+                        <a href="https://www.c-jump.com/download/clib/C_Programming_Language.pdf" target="_blank" class="btn-buy">Baixar PDF</a>
+                    </div>
+
+                    <div class="product-card">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>Automate the Boring Stuff</h4>
+                            <p>Aprenda Python prático para automatizar planilhas, arquivos e rotinas diárias.</p>
+                        </div>
+                        <a href="https://automatetheboringstuff.com/" target="_blank" class="btn-buy">Ler Online</a>
+                    </div>
+
+                    <div class="product-card">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>Sistemas Operacionais (OSTEP)</h4>
+                            <p>Virtualização, Concorrência e Persistência de Memória.</p>
+                        </div>
+                        <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" class="btn-buy">Baixar Capítulos</a>
+                    </div>
+
+                    <div class="product-card">
+                        <span class="tag-free">Grátis</span>
+                        <div>
+                            <h4>Open Data Structures</h4>
+                            <p>Estruturas de Dados explicadas com foco em C++ e Python.</p>
+                        </div>
+                        <a href="http://opendatastructures.org" target="_blank" class="btn-buy">Acessar Livro</a>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SEÇÃO 3: LEITOR EM ÁUDIO (FERRAMENTA) -->
+            <section id="leitor" class="feature-box">
+                <div class="section-title">
+                    <span>🎙️ Leitor de Documentos em Voz (SaaS Grátis)</span>
+                    <span class="badge-count">Ferramenta Ativa</span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                    Faça upload do capítulo do seu livro técnico (PDF) e ouça a leitura diretamente pelo navegador.
+                </p>
+
+                <div style="margin-top: 1rem;">
+                    <input type="file" id="pdfFileInput" accept="application/pdf" onchange="loadPDFText(event)">
+                </div>
+
+                <div class="audio-controls">
+                    <button class="btn-audio" id="btnPlay" onclick="speakText()" disabled>▶️ Ouvir</button>
+                    <button class="btn-audio" id="btnPause" onclick="pauseAudio()" disabled style="background: rgba(255,255,255,0.1);">⏸️ Pausar</button>
+                    <button class="btn-audio" id="btnResume" onclick="resumeAudio()" disabled style="background: rgba(255,255,255,0.1);">⏯️ Retomar</button>
+                    <button class="btn-audio" id="btnStop" onclick="stopAudio()" disabled style="background: rgba(255,255,255,0.1);">⏹️ Parar</button>
+
+                    <select id="voiceSelect" style="max-width: 160px;"></select>
+                    <select id="rateSelect">
+                        <option value="1" selected>1.0x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                    </select>
+                </div>
+
+                <div id="audioStatus" style="font-size: 0.8rem; color: var(--accent-cyan); margin-top: 0.5rem; font-weight: 700;">Aguardando PDF...</div>
+                <div class="chat-output" id="aiOutput">O texto do livro aparecerá aqui...</div>
+            </section>
+
+            <!-- SEÇÃO 4: CARREIRA & PRÁTICA -->
+            <section id="carreira">
+                <div class="section-title">
+                    <span>🚀 Vitrine de Carreiras, Redes & Prática</span>
+                    <span class="badge-count">4 Plataformas</span>
+                </div>
+
+                <div class="product-grid">
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-github);">
+                        <div>
+                            <h4>🐙 GitHub para Devs</h4>
+                            <p>Seu portfólio prático. Suba projetos em C, Python ou SQL e mostre seus commits aos recrutadores.</p>
+                        </div>
+                        <a href="https://github.com/signup" target="_blank" class="btn-buy btn-github">Criar Conta no GitHub</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid var(--accent-linkedin);">
+                        <div>
+                            <h4>💼 LinkedIn Profissional</h4>
+                            <p>Sua rede de conexões. Destaque suas formações e conecte-se com recrutadores tech.</p>
+                        </div>
+                        <a href="https://www.linkedin.com/signup" target="_blank" class="btn-buy btn-linkedin">Criar Conta no LinkedIn</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid #f59e0b;">
+                        <div>
+                            <h4>🧩 LeetCode</h4>
+                            <p>Plataforma para treinar lógica, algoritmos e estruturas de dados para entrevistas de emprego.</p>
+                        </div>
+                        <a href="https://leetcode.com/" target="_blank" class="btn-buy btn-leetcode">Praticar Algoritmos</a>
+                    </div>
+
+                    <div class="product-card" style="border-top: 4px solid #10b981;">
+                        <div>
+                            <h4>💬 Dev.to Community</h4>
+                            <p>Comunidade global de desenvolvedores para ler artigos técnicos e publicar seus aprendizados.</p>
+                        </div>
+                        <a href="https://dev.to/" target="_blank" class="btn-buy">Explorar Artigos</a>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SEÇÃO 5: CONVERSOR DE DOCUMENTOS -->
+            <section id="utilitarios" class="feature-box">
+                <div class="section-title">
+                    <span>🛠️ Conversor de Currículos e Documentos</span>
+                    <span class="badge-count">Utilitário</span>
+                </div>
+                <form style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;" onsubmit="processConversion(event)">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary);">Arquivo:</label>
+                        <input type="file" id="convFileInput" required style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary);">Formato desejado:</label>
+                        <select id="convFormat" style="width: 100%;">
+                            <option value="txt">Texto (.txt)</option>
+                            <option value="docx">Word (.docx)</option>
+                            <option value="pdf">PDF (.pdf)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-buy" style="background: var(--accent-cyan); color: #060911;">Converter Agora</button>
+                </form>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let extractedPdfText = "";
+        let synth = window.speechSynthesis;
+        let speechUtterance = null;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices().filter(v => v.lang.startsWith('pt'));
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            if (voices.length === 0) voices = synth.getVoices();
+
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name}`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function copyPix() {
+            const pixKey = document.getElementById('pixKey').innerText;
+            navigator.clipboard.writeText(pixKey);
+            alert("Chave Pix (" + pixKey + ") copiada com sucesso! Muito obrigado por apoiar o projeto! 💚");
+        }
+
+        async function loadPDFText(event) {
+            const file = event.target.files[0];
+            const output = document.getElementById('aiOutput');
+            const status = document.getElementById('audioStatus');
+            
+            if (!file || file.type !== "application/pdf") return;
+
+            output.innerText = "📄 Lendo arquivo...";
+            status.innerText = "Extraindo texto...";
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = "";
+                const maxPages = Math.min(pdf.numPages, 10);
+
+                for (let i = 1; i <= maxPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    fullText += " " + textContent.items.map(item => item.str).join(" ");
+                }
+
+                extractedPdfText = fullText.trim();
+                output.innerText = extractedPdfText;
+                status.innerText = "✅ Leitura concluída! Pressione Ouvir.";
+                document.getElementById('btnPlay').disabled = false;
+                loadVoices();
+            } catch (err) {
+                output.innerText = "❌ Erro ao ler PDF: " + err.message;
+            }
+        }
+
+        function speakText() {
+            if (!extractedPdfText) return;
+            stopAudio();
+
+            speechUtterance = new SpeechSynthesisUtterance(extractedPdfText);
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (voices[voiceSelect.value]) speechUtterance.voice = voices[voiceSelect.value];
+            speechUtterance.rate = parseFloat(document.getElementById('rateSelect').value);
+
+            speechUtterance.onstart = () => {
+                document.getElementById('audioStatus').innerText = "🔊 Lendo texto...";
+                document.getElementById('btnPause').disabled = false;
+                document.getElementById('btnStop').disabled = false;
+            };
+
+            speechUtterance.onend = () => {
+                document.getElementById('audioStatus').innerText = "✅ Leitura finalizada.";
+            };
+
+            synth.speak(speechUtterance);
+        }
+
+        function pauseAudio() {
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+                document.getElementById('btnResume').disabled = false;
+            }
+        }
+
+        function resumeAudio() {
+            if (synth.paused) {
+                synth.resume();
+                document.getElementById('btnResume').disabled = true;
+            }
+        }
+
+        function stopAudio() {
+            if (synth.speaking || synth.paused) {
+                synth.cancel();
+            }
+        }
+
+        function processConversion(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('convFileInput');
+            const targetFormat = document.getElementById('convFormat').value;
+
+            if (!fileInput.files.length) return;
+            const file = fileInput.files[0];
+            const fileName = file.name;
+            const fileExt = fileName.split('.').pop().toLowerCase();
+
+            if (targetFormat === 'txt') {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const blob = new Blob([evt.target.result], { type: 'text/plain;charset=utf-8' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = fileName.replace('.' + fileExt, '.txt');
+                    a.click();
+                };
+                reader.readAsText(file);
+            } else {
+                window.open(`https://www.ilovepdf.com/pt/${fileExt}-to-${targetFormat}`, '_blank');
+            }
+        }
+
+        function filterStore() {
+            const input = document.getElementById('storeSearch').value.toLowerCase();
+            const cards = document.getElementsByClassName('product-card');
+
+            for (let card of cards) {
+                card.style.display = card.innerText.toLowerCase().includes(input) ? "flex" : "none";
+            }
+        }
+    </script>
+</body>
+</html>
